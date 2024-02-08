@@ -153,4 +153,67 @@ const game = () => {
   }
 };
 
+const displayReels = (reels) => {
+  console.clear(); // Clear console for a cleaner display
+  for (let i = 0; i < ROWS; i++) {
+    let rowString = "";
+    for (let j = 0; j < COLS; j++) {
+      rowString += reels[j][i];
+      if (j !== COLS - 1) {
+        rowString += " | ";
+      }
+    }
+    console.log(rowString);
+  }
+};
+
+const playWinningSound = () => {
+  // Implement a function to play winning sound
+  console.log("Playing winning sound...");
+};
+
+const game = () => {
+  let balance = deposit();
+
+  while (true) {
+    console.log(`You have a balance of $${balance}`);
+    const numberOfLines = getNumberOfLines();
+    const bet = getBet(balance, numberOfLines);
+    balance -= bet * numberOfLines;
+    const reels = spin();
+    const rows = transpose(reels);
+    
+    // Display the slot machine reels with animations
+    for (let i = 0; i < 5; i++) {
+      displayReels(reels);
+      setTimeout(() => {
+        reels.unshift(reels.pop()); // Simulate spinning animation
+      }, 500);
+    }
+    
+    // Display the final result
+    displayReels(reels);
+
+    const winnings = getWinnings(rows, bet, numberOfLines);
+    balance += winnings;
+    console.log(`You won $${winnings.toFixed(2)}`);
+    
+    // Play winning sound if there are winnings
+    if (winnings > 0) {
+      playWinningSound();
+    }
+
+    if (balance <= 0) {
+      console.log("You ran out of money!");
+      break;
+    }
+
+    const playAgain = prompt("Do you want to play again (y/n)? ");
+
+    if (playAgain.toLowerCase() !== "y") {
+      break;
+    }
+  }
+};
+
 game();
